@@ -4,16 +4,16 @@
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 
-const uint16_t irPin = 2;
+const uint16_t irPin = 4;
 
 IRsend irsend(irPin);
 
 // WiFi configs
-const char* ssid = "Network_ID";
-const char* password = "Network_Pass";
+const char* ssid = "NetId";
+const char* password = "NetPass";
 
 // MQTT Config
-const char *mqtt_broker = "MQTT_IP";
+const char *mqtt_broker = "MQTTIP";
 const char *topic = "MPU/Keyboard";
 const char *mqtt_username = "";
 const char *mqtt_password = "";
@@ -23,27 +23,27 @@ const int mqtt_port = 1883;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-unsigned short int commandTree[21][2] = {{10, 0x21},
-                                         {11, 0x22},
-                                         {12, 0x23},
-                                         {13, 0x24},
-                                         {14, 0x25},
-                                         {15, 0x26},
-                                         {16, 0x27},
-                                         {17, 0x28},
-                                         {18, 0x29},
-                                         {19, 0x30},
-                                         {20, 0x31},
-                                         {21, 0x32},
-                                         {22, 0x33},
-                                         {23, 0x34},
-                                         {24, 0x35},
-                                         {25, 0x36},
-                                         {26, 0x37},
-                                         {27, 0x38},
-                                         {28, 0x39},
-                                         {29, 0x40},
-                                         {30, 0x41}};
+unsigned short int commandTree[21][3] = {{10, 0x0, 0x21},
+                                         {11, 0x0, 0x22},
+                                         {12, 0x0, 0x23},
+                                         {13, 0x0, 0x24},
+                                         {14, 0x0, 0x25},
+                                         {15, 0x0, 0x26},
+                                         {16, 0x0, 0x27},
+                                         {17, 0x0, 0x28},
+                                         {18, 0x0, 0x29},
+                                         {19, 0x0, 0x30},
+                                         {20, 0x0, 0x31},
+                                         {21, 0x0, 0x32},
+                                         {22, 0x0, 0x33},
+                                         {23, 0x0, 0x34},
+                                         {24, 0x0, 0x35},
+                                         {25, 0x0, 0x36},
+                                         {26, 0x0, 0x37},
+                                         {27, 0x0, 0x38},
+                                         {28, 0x0, 0x39},
+                                         {29, 0x0, 0x40},
+                                         {30, 0x0, 0x41}};
 
 void reconnectWiFi(){
   // Starting the conection
@@ -118,9 +118,8 @@ void callback(char *topic, uint8_t *payload, unsigned int length) {
   
     for (int row = 0; row < 21; row++) {
       if(command == commandTree[row][0]){
-        Serial.println("Comando enviado ");
-        Serial.print((char)commandTree[row][1]);
-        irsend.sendNEC(commandTree[row][1]);
+        Serial.println("Comando enviado!");
+        irsend.sendNEC(irsend.encodeNEC(commandTree[row][1], commandTree[row][2]));
         break;
       }
     }
